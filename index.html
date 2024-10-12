@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML/CSS Quiz Game</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+  color: #fff;
+}
+.container h1{
+    background-image: linear-gradient(to right, #f00090, #861fed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+button {
+  padding: 15px 30px;
+  font-size: 16px;
+  background-image: linear-gradient(to right, #f00090, #861fed);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 50px;
+  font-weight: bold;
+}
+
+button:hover {
+  color: #000;
+}
+
+.message {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #fff;
+}
+
+.options {
+  margin-top: 20px;
+}
+
+.option {
+  padding: 10px 15px;
+  margin: 10px 0;
+  background-image: linear-gradient(to right, #861fed , #f00090);
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 20px;
+  color: #fff;
+}
+
+.option:hover {
+  color: #000;
+}
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>HTML/CSS Quiz Game</h1>
+    <button id="startQuizBtn">Start Quiz</button>
+    <div id="message" class="message"></div>
+    <div id="options" class="options"></div>
+  </div>
+
+  <script>
+    // Array of 10 questions with options and correct answers
+    const quizData = [
+        {
+            question: "Which of the following is used to create a hyperlink in HTML?",
+            options: ["<div>", "<a>", "<span>", "<link>"],
+            correct: 1
+        },
+        {
+            question: "What is the correct HTML element for the largest heading?",
+            options: ["<heading>", "<h6>", "<h1>", "<h2>"],
+            correct: 2
+        },
+        {
+            question: "Which property is used to change the background color in CSS?",
+            options: ["color", "background-color", "bg-color", "background"],
+            correct: 1
+        },
+        {
+            question: "Which HTML element is used to specify a footer for a document?",
+            options: ["<footer>", "<bottom>", "<section>", "<div>"],
+            correct: 0
+        },
+        {
+            question: "How can you make text bold in HTML?",
+            options: ["<strong>", "<b>", "<bold>", "Both A & B"],
+            correct: 3
+        },
+        {
+            question: "Which CSS property controls the text size?",
+            options: ["font-style", "text-size", "font-size", "text-style"],
+            correct: 2
+        },
+        {
+            question: "How do you add a background color for all <h1> elements?",
+            options: ["h1 {background-color: yellow;}", "h1.all {background-color: yellow;}", "all.h1 {background-color: yellow;}", "h1 {bg-color: yellow;}"],
+            correct: 0
+        },
+        {
+            question: "Which HTML attribute is used to define inline styles?",
+            options: ["class", "styles", "style", "font"],
+            correct: 2
+        },
+        {
+            question: "Which property is used to change the font of an element?",
+            options: ["font-weight", "font-style", "font-family", "font-size"],
+            correct: 2
+        },
+        {
+            question: "What does CSS stand for?",
+            options: ["Creative Style Sheets", "Cascading Style Sheets", "Computer Style Sheets", "Colorful Style Sheets"],
+            correct: 1
+        }
+    ];
+
+    let currentQuestion = 0;  // Track the current question
+    let score = 0;  // Track the user's score
+
+    // Function to display the question and options with a delay
+    function displayQuestion(callback) {
+        const messageDiv = document.getElementById("message");
+        const optionsDiv = document.getElementById("options");
+
+        setTimeout(function () {
+            const current = quizData[currentQuestion];
+            messageDiv.innerHTML = current.question;
+
+            optionsDiv.innerHTML = ""; // Clear previous options
+
+            // Display options
+            current.options.forEach((option, index) => {
+                const optionDiv = document.createElement("div");
+                optionDiv.classList.add("option");
+                optionDiv.innerText = option;
+                optionDiv.onclick = function () {
+                    callback(index === current.correct, optionDiv);  // Use callback for correct/wrong check
+                };
+                optionsDiv.appendChild(optionDiv);
+            });
+        }, 1000);  // 1 second delay before displaying the question and options
+    }
+
+    // Function to check the answer with a delay for displaying the alert box
+    function checkAnswer(isCorrect) {
+        setTimeout(() => {
+            if (isCorrect) {
+                score++;  // Increment score if the answer is correct
+                alert("Correct!");
+            } else {
+                alert(`Wrong! The correct answer is "${quizData[currentQuestion].options[quizData[currentQuestion].correct]}".`);
+            }
+
+            // Move to next question after the answer is checked
+            currentQuestion++;
+
+            if (currentQuestion < quizData.length) {
+                displayQuestion(checkAnswer);  // Continue with the next question using callback
+            } else {
+                alert(`Quiz completed! Your final score is ${score} out of ${quizData.length}.`);
+            }
+
+            // Disable further clicks
+            const options = document.querySelectorAll(".option");
+            options.forEach(option => option.onclick = null);
+        }, 1000);  // 1 second delay before showing the alert box
+    }
+
+    // Function to start the quiz
+    function startQuiz() {
+        const messageDiv = document.getElementById("message");
+        const optionsDiv = document.getElementById("options");
+
+        currentQuestion = 0;  // Reset to the first question
+        score = 0;  // Reset score
+        messageDiv.innerHTML = "Get ready for the quiz!";
+        optionsDiv.innerHTML = ""; // Clear options before starting
+
+        displayQuestion(checkAnswer);  // Start the quiz with the callback function
+    }
+
+    // Add event listener to the button to start the quiz
+    document.getElementById("startQuizBtn").addEventListener("click", startQuiz);
+
+</script>
+
+</body>
+</html>
